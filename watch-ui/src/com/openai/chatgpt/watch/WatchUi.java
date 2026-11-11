@@ -115,17 +115,17 @@ public final class WatchUi {
 
         LinearLayout screen = new LinearLayout(a);
         screen.setOrientation(LinearLayout.VERTICAL);
-        screen.setPadding(dp(a, 15), dp(a, 28), dp(a, 15), dp(a, 24));
+        screen.setPadding(dp(a, 5), dp(a, 16), dp(a, 5), dp(a, 8));
         overlay.addView(screen, new FrameLayout.LayoutParams(-1, -1));
 
         LinearLayout header = new LinearLayout(a);
         header.setOrientation(LinearLayout.HORIZONTAL);
         header.setGravity(Gravity.CENTER_VERTICAL);
-        header.setPadding(dp(a, 28), 0, dp(a, 28), dp(a, 3));
-        screen.addView(header, new LinearLayout.LayoutParams(-1, dp(a, 49)));
+        header.setPadding(dp(a, 45), 0, dp(a, 45), dp(a, 0));
+        screen.addView(header, new LinearLayout.LayoutParams(-1, dp(a, 38)));
 
         TextView old = control(a, "‹", false, WatchUi::openOriginal);
-        header.addView(old, new LinearLayout.LayoutParams(dp(a, 38), dp(a, 36)));
+        header.addView(old, new LinearLayout.LayoutParams(dp(a, 30), dp(a, 30)));
         TextView title = label(a, "ChatGPT", 18, WHITE);
         title.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
         title.setGravity(Gravity.CENTER);
@@ -136,11 +136,11 @@ public final class WatchUi {
             appendBubble("Новий чат. Для нової розмови в акаунті натисни + в оригінальному екрані.", false);
             refreshStatus("Для створення нового чату відкрий оригінал.");
         });
-        header.addView(reset, new LinearLayout.LayoutParams(dp(a, 38), dp(a, 36)));
+        header.addView(reset, new LinearLayout.LayoutParams(dp(a, 30), dp(a, 30)));
 
         status = label(a, "Круглий інтерфейс · оригінальний ChatGPT", 10, MUTED);
         status.setGravity(Gravity.CENTER);
-        screen.addView(status, new LinearLayout.LayoutParams(-1, dp(a, 22)));
+        screen.addView(status, new LinearLayout.LayoutParams(-1, dp(a, 15)));
 
         threadScroll = new ScrollView(a);
         threadScroll.setFillViewport(true);
@@ -151,7 +151,7 @@ public final class WatchUi {
         sc.rightMargin = dp(a, 6);
         screen.addView(threadScroll, sc);
         thread = new LinearLayout(a);
-        thread.setPadding(dp(a, 10), dp(a, 10), dp(a, 10), dp(a, 8));
+        thread.setPadding(dp(a, 13), dp(a, 5), dp(a, 13), dp(a, 4));
         thread.setOrientation(LinearLayout.VERTICAL);
         threadScroll.addView(thread);
 
@@ -159,8 +159,8 @@ public final class WatchUi {
 
         LinearLayout sendRow = new LinearLayout(a);
         sendRow.setGravity(Gravity.CENTER_VERTICAL);
-        sendRow.setPadding(dp(a, 20), dp(a, 4), dp(a, 20), 0);
-        screen.addView(sendRow, new LinearLayout.LayoutParams(-1, dp(a, 67)));
+        sendRow.setPadding(dp(a, 47), dp(a, 0), dp(a, 47), 0);
+        screen.addView(sendRow, new LinearLayout.LayoutParams(-1, dp(a, 50)));
 
         composer = new EditText(a);
         composer.setSingleLine(false);
@@ -171,14 +171,14 @@ public final class WatchUi {
         composer.setHintTextColor(MUTED);
         composer.setHint("Повідомлення...");
         composer.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-        composer.setPadding(dp(a, 14), dp(a, 10), dp(a, 9), dp(a, 10));
+        composer.setPadding(dp(a, 8), dp(a, 6), dp(a, 6), dp(a, 6));
         composer.setBackground(bg(PANEL, 23, a));
         LinearLayout.LayoutParams cp = new LinearLayout.LayoutParams(0, -2, 1);
         cp.rightMargin = dp(a, 5);
         sendRow.addView(composer, cp);
 
         TextView submit = control(a, "↑", true, WatchUi::sendMessage);
-        sendRow.addView(submit, new LinearLayout.LayoutParams(dp(a, 47), dp(a, 47)));
+        sendRow.addView(submit, new LinearLayout.LayoutParams(dp(a, 35), dp(a, 35)));
 
         parent.addView(overlay, new FrameLayout.LayoutParams(-1, -1));
         liveOverlay = new WeakReference<>(overlay);
@@ -240,7 +240,7 @@ public final class WatchUi {
 
         if (!sendToUnderlying(text)) {
             appendBubble("Не вдалося знайти поле введення в оригінальному ChatGPT. Увійди в акаунт через ‹ та спробуй ще раз. Якщо поле залишиться недоступним, ця версія Valdi несумісна з таким керуванням.", false);
-            refreshStatus("Надсилання не підтримується цим екраном Valdi");
+            refreshStatus("Тільки при доступному полі введення ChatGPT");
             return;
         }
         waiting = true;
