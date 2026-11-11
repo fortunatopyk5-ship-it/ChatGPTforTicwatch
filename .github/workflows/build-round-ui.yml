@@ -1,0 +1,33 @@
+name: Compile Round ChatGPT UI Bytecode
+on:
+  push:
+    paths:
+      - 'watch-ui/**'
+      - '.github/workflows/build-round-ui.yml'
+  workflow_dispatch:
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Compile with Android SDK
+        run: |
+          set -euxo pipefail
+          SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | sort -V | tail -n 1)"
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" "platforms;android-36" "build-tools;36.0.0"
+          mkdir -p output classes
+          javac -encoding UTF-8 -source 17 -target 17 -cp "$ANDROID_HOME/platforms/android-36/android.jar" -d classes watch-ui/src/com/openai/chatgpt/watch/WatchUi.java
+          "$ANDROID_HOME/build-tools/36.0.0/d8" --min-api 30 --lib "$ANDROID_HOME/platforms/android-36/android.jar" --output output $(find classes -name '*.class')
+          test -s output/classes.dex
+          cd output
+          sha256sum classes.dex > SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: RoundChatGPT-UI-dex
+          path: output/
+          if-no-files-found: error
