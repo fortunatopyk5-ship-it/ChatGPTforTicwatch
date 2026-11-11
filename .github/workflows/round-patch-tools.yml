@@ -1,0 +1,22 @@
+name: Build tools for ChatGPT round patch
+on:
+  push:
+    paths:
+      - '.github/workflows/round-patch-tools.yml'
+  workflow_dispatch:
+jobs:
+  tools:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch official open-source patch utilities
+        run: |
+          set -euxo pipefail
+          mkdir -p jars
+          curl -L --fail --retry 4 --retry-delay 2 -o jars/apktool_3.0.3.jar https://github.com/iBotPeaches/Apktool/releases/download/v3.0.3/apktool_3.0.3.jar
+          curl -L --fail --retry 4 --retry-delay 2 -o jars/uber-apk-signer-1.3.0.jar https://github.com/patrickfav/uber-apk-signer/releases/download/v1.3.0/uber-apk-signer-1.3.0.jar
+          sha256sum jars/*
+      - uses: actions/upload-artifact@v4
+        with:
+          name: round-patch-internal-build-tools
+          path: jars/
+          if-no-files-found: error
