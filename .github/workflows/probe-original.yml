@@ -1,0 +1,19 @@
+name: Investigate original ChatGPT package
+on:
+  push:
+    paths: [.github/workflows/probe-original.yml]
+  workflow_dispatch:
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Inspect distribution URLs without downloading files
+      shell: bash
+      run: |
+        for url in \
+          'https://d.apkpure.com/b/XAPK/com.openai.chatgpt?version=latest' \
+          'https://d.apkpure.com/b/APK/com.openai.chatgpt?version=latest' \
+          'https://www.apkmirror.com/wp-content/themes/APKMirror/download.php?id=17155879&key=38a6dd6995ffd4a441895e4cb2c4ded84bb86235'; do
+          echo "---- ${url%%\?*}"
+          curl -L -Is --max-time 18 "$url" | grep -Ei '^(HTTP/|location:|content-type:|content-length:)' | tail -10 || true
+        done
