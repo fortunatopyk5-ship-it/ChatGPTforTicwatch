@@ -7,7 +7,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -30,3 +30,17 @@ jobs:
           name: WristGPT-Bridge-APK
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+      - name: Publish public direct-download APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          APK="app/build/outputs/apk/debug/app-debug.apk"
+          cp "$APK" WristGPT-TicWatch-Pro5-Experimental.apk
+          if gh release view v0.2-experimental >/dev/null 2>&1; then
+            gh release upload v0.2-experimental WristGPT-TicWatch-Pro5-Experimental.apk --clobber
+          else
+            gh release create v0.2-experimental WristGPT-TicWatch-Pro5-Experimental.apk \
+              --title "WristGPT Bridge 0.2 — Experimental Wear OS" \
+              --notes "Experimental keyboard-first Wear OS bridge. No OpenAI API key needed. Requires the original ChatGPT Android app installed and signed in separately; compatibility with Google sign-in on Wear OS is NOT guaranteed. Accessibility-based automation may fail. Built as a debug APK, not officially supported by OpenAI." \
+              --prerelease --target main
+          fi
